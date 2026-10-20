@@ -7,8 +7,17 @@ class HabitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habit
         fields = (
-            "id", "user", "place", "time", "action", "is_pleasant",
-            "related_habit", "periodicity", "reward", "duration", "is_public",
+            "id",
+            "user",
+            "place",
+            "time",
+            "action",
+            "is_pleasant",
+            "related_habit",
+            "periodicity",
+            "reward",
+            "duration",
+            "is_public",
         )
         read_only_fields = ("user",)
 

@@ -7,6 +7,18 @@ from .serializers import HabitSerializer
 
 
 class HabitViewSet(viewsets.ModelViewSet):
+    """
+    Управление привычками.
+
+    list: Список привычек (свои и публичные).
+    create: Создание новой привычки.
+    retrieve: Получение конкретной привычки.
+    update: Обновление своей привычки.
+    partial_update: Частичное обновление своей привычки.
+    destroy: Удаление своей привычки.
+    """
+    queryset = Habit.objects.all()
+
     serializer_class = HabitSerializer
     permission_classes = [permissions.IsAuthenticated]
 

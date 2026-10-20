@@ -13,42 +13,76 @@ class HabitsTests(APITestCase):
         self.client.force_authenticate(self.user)
 
     def test_create_habit(self):
-        response = self.client.post(reverse("habit-list"), {
-            "place": "дом", "time": "08:00", "action": "зарядка",
-            "duration": 60, "periodicity": 1,
-        })
+        response = self.client.post(
+            reverse("habit-list"),
+            {
+                "place": "дом",
+                "time": "08:00",
+                "action": "зарядка",
+                "duration": 60,
+                "periodicity": 1,
+            },
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_duration_validation(self):
-        response = self.client.post(reverse("habit-list"), {
-            "place": "дом", "time": "08:00", "action": "зарядка",
-            "duration": 200, "periodicity": 1,
-        })
+        response = self.client.post(
+            reverse("habit-list"),
+            {
+                "place": "дом",
+                "time": "08:00",
+                "action": "зарядка",
+                "duration": 200,
+                "periodicity": 1,
+            },
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_reward_and_related_conflict(self):
         pleasant = Habit.objects.create(
-            user=self.user, place="x", time="10:00", action="y",
-            is_pleasant=True, duration=60,
+            user=self.user,
+            place="x",
+            time="10:00",
+            action="y",
+            is_pleasant=True,
+            duration=60,
         )
-        response = self.client.post(reverse("habit-list"), {
-            "place": "дом", "time": "08:00", "action": "зарядка",
-            "duration": 60, "periodicity": 1,
-            "reward": "шоколад", "related_habit": pleasant.id,
-        })
+        response = self.client.post(
+            reverse("habit-list"),
+            {
+                "place": "дом",
+                "time": "08:00",
+                "action": "зарядка",
+                "duration": 60,
+                "periodicity": 1,
+                "reward": "шоколад",
+                "related_habit": pleasant.id,
+            },
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_pleasant_without_reward(self):
-        response = self.client.post(reverse("habit-list"), {
-            "place": "дом", "time": "08:00", "action": "ванна",
-            "duration": 60, "is_pleasant": True, "reward": "конфета",
-        })
+        response = self.client.post(
+            reverse("habit-list"),
+            {
+                "place": "дом",
+                "time": "08:00",
+                "action": "ванна",
+                "duration": 60,
+                "is_pleasant": True,
+                "reward": "конфета",
+            },
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_cannot_edit_foreign_habit(self):
         other = User.objects.create_user(username="bob", password="secret123")
         habit = Habit.objects.create(
-            user=other, place="x", time="10:00", action="y", duration=60,
+            user=other,
+            place="x",
+            time="10:00",
+            action="y",
+            duration=60,
         )
         response = self.client.patch(
             reverse("habit-detail", args=[habit.id]), {"action": "new"}
