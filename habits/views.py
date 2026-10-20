@@ -17,6 +17,7 @@ class HabitViewSet(viewsets.ModelViewSet):
     partial_update: Частичное обновление своей привычки.
     destroy: Удаление своей привычки.
     """
+
     queryset = Habit.objects.all()
 
     serializer_class = HabitSerializer
